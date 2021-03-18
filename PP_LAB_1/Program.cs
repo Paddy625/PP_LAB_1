@@ -7,19 +7,20 @@ using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 
 namespace PP_LAB_1
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
             RandomNumberGenerator rng = new RandomNumberGenerator(1);
             List<int> values = new List<int>();
             List<int> weight = new List<int>();
-            List<int> packed = new List<int>();
             int cost = 0;
             int load = 0;
+            result res = new result(0, 0);
 
             System.Console.WriteLine("Podaj ilosc przedmiotów: ");
             int count = Convert.ToInt32(System.Console.ReadLine());
@@ -52,21 +53,54 @@ namespace PP_LAB_1
             {
                 System.Console.Write(x + "\t");
             }
-            System.Console.WriteLine("\n Wybrano przedmioty o numerach: ");
-
-            for (int i = 0; i < count; i++)
+            
+            res = knapsack(weight, values, capacity);
+            if (res == null)
             {
-                if (load + weight[i] <= capacity)
+                System.Console.ReadLine();
+                return;
+            }
+
+            System.Console.WriteLine("\n Wartość wybranych przedmiotów wynosi: " + res.cost);
+            System.Console.WriteLine("Waga wybranych przedmiotów wynosi: " + res.load);
+            System.Console.ReadLine();
+        }
+
+        public class result 
+        {
+            public int load;
+            public int cost;
+            public List<int> packed;
+
+            public result(int x, int y) 
+            {
+                cost = x;
+                load = y;
+                packed = new List<int>();
+            }
+        }
+        public static result knapsack(List<int> weight, List<int> values, int capacity)
+        {
+            result res = new result(0,0);
+
+            System.Console.WriteLine("\n Wybrano przedmioty o numerach: ");
+            for (int i = 0; i < values.Count(); i++)
+            {
+                if (res.load + weight[i] <= capacity)
                 {
-                    load = load + weight[i];
-                    cost = cost + values[i];
-                    packed.Add(i + 1);
-                    System.Console.Write(i + 1 + "\t");     //dodać listę z przedmiotami
+                    res.load = res.load + weight[i];
+                    res.cost = res.cost + values[i];
+                    res.packed.Add(i + 1);
+                    System.Console.Write(i + 1 + "\t");
                 }
             }
-            System.Console.WriteLine("\n Wartość wybranych przedmiotów wynosi: " + cost);
-            System.Console.WriteLine("Waga wybranych przedmiotów wynosi: " + load);
-            System.Console.ReadLine();
+            if (values.Count() == 0)
+            {
+                System.Console.WriteLine("Nieprawidłowe dane wejściowe");
+                return null;
+            }
+            else
+                return res;
         }
     }
 }
