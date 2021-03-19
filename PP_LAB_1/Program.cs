@@ -22,85 +22,99 @@ namespace PP_LAB_1
             int load = 0;
             result res = new result(0, 0);
 
-            System.Console.WriteLine("Podaj ilosc przedmiotów: ");
+            // === Ustalanie zmiennych ===
+            System.Console.Write("Podaj ilosc przedmiotów: ");
             int count = Convert.ToInt32(System.Console.ReadLine());
-            System.Console.WriteLine("Podaj maksymalną wagę przedmiotów: ");
+            System.Console.Write("Podaj maksymalną wagę przedmiotów: ");
             int weightMax = Convert.ToInt32(System.Console.ReadLine());
-            System.Console.WriteLine("Podaj maksymalną wartosc przedmiotów: ");
+            System.Console.Write("Podaj maksymalną wartosc przedmiotów: ");
             int valueMax = Convert.ToInt32(System.Console.ReadLine());
-            System.Console.WriteLine("Podaj pojemność plecaka: ");
+            System.Console.Write("Podaj pojemność plecaka: ");
             int capacity = Convert.ToInt32(System.Console.ReadLine());
-
+            // === Losowanie przedmiotów ===
             for (int i = 0; i < count; i++)
-            {
                 values.Add(rng.nextInt(1, valueMax));
-                System.Console.Write(i+1 + "\t");
-            }
             for (int i = 0; i < count; i++)
-            {
                 weight.Add(rng.nextInt(1, weightMax));
-            }
-            System.Console.WriteLine();
 
-            foreach (int x in weight)
-            {
-                System.Console.Write(x + "\t");
-            }
+            // === Wyświetlanie przedmiotów ===
+            DisplayObjects(values, weight);
 
-            System.Console.WriteLine();
-
-            foreach (int x in values)
-            {
-                System.Console.Write(x + "\t");
-            }
-            
+            // === Problem plecakowy ===
             res = knapsack(weight, values, capacity);
-            if (res == null)
+            if (res != null)
             {
-                System.Console.ReadLine();
+                System.Console.WriteLine("\nWartość wybranych przedmiotów wynosi:\t" + res.cost);
+                System.Console.WriteLine("Waga wybranych przedmiotów wynosi:\t" + res.load);
                 return;
             }
-
-            System.Console.WriteLine("\n Wartość wybranych przedmiotów wynosi: " + res.cost);
-            System.Console.WriteLine("Waga wybranych przedmiotów wynosi: " + res.load);
-            System.Console.ReadLine();
+            else
+                return;
         }
 
-        public class result 
+        // === Struktura zawierająca rozwiązanie problemu plecakowego ===
+        public class result
         {
             public int load;
             public int cost;
             public List<int> packed;
-
-            public result(int x, int y) 
+            public result(int x, int y)
             {
                 cost = x;
                 load = y;
                 packed = new List<int>();
             }
         }
+        // ==============================================================
+
+        // === Problem plecakowy - rozwiazanie naiwne =======================================
         public static result knapsack(List<int> weight, List<int> values, int capacity)
         {
-            result res = new result(0,0);
-
-            System.Console.WriteLine("\n Wybrano przedmioty o numerach: ");
-            for (int i = 0; i < values.Count(); i++)
+            if (capacity == 0)
             {
-                if (res.load + weight[i] <= capacity)
-                {
-                    res.load = res.load + weight[i];
-                    res.cost = res.cost + values[i];
-                    res.packed.Add(i + 1);
-                    System.Console.Write(i + 1 + "\t");
-                }
-            }
-            if (values.Count() == 0)
-            {
-                System.Console.WriteLine("Nieprawidłowe dane wejściowe");
+                System.Console.WriteLine("Zerowa pojemność plecaka!");
                 return null;
             }
             else
-                return res;
+            {
+                result res = new result(0, 0);
+                System.Console.WriteLine("\nWybrano przedmioty o numerach:");
+                for (int i = 0; i < values.Count(); i++)
+                {
+                    if (res.load + weight[i] <= capacity)
+                    {
+                        res.load = res.load + weight[i];
+                        res.cost = res.cost + values[i];
+                        res.packed.Add(i + 1);
+                        System.Console.Write("\t" + (i + 1));
+                    }
+                }
+                if (values.Count() == 0)
+                {
+                    System.Console.WriteLine("Brak przedmiotów mieszczących się w plecaku!");
+                    return null;
+                }
+                else
+                    return res;
+            }
         }
+        // ==================================================================================
+
+        // === Wyświetlanie przedmiotów ==============================
+        static void DisplayObjects(List<int> values, List<int> weight)
+        {
+            System.Console.Write("\nN:\t");
+            for (int i = 0; i < values.Count(); i++)
+                System.Console.Write(i + 1 + "\t");
+            System.Console.Write("\nW:\t");
+            foreach (int x in weight)
+                System.Console.Write(x + "\t");
+            System.Console.Write("\nV:\t");
+            foreach (int x in values)
+                System.Console.Write(x + "\t");
+            System.Console.WriteLine();
+            return;
+        }
+        // ===========================================================
     }
 }
